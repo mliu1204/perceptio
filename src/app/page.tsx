@@ -1,65 +1,19 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import axios from "axios";
+import StaticImage from "./components/StaticImage";
+import TestApi from "./components/TestApi";
+import InputLocation from "./components/InputLocation";
 
 function App() {
-  const [inputLocation, setInputLocation] = useState("");
-  const [savedLocation, setSavedLocation] = useState("51.089763,-113.978308");
-  const [data, setData] = useState("");
-  const [imageUrl, setImageUrl] = useState("47.5763831,-122.4211769");
-  // const apiKey = process.env.API_KEY;
-  const apiKey = "AIzaSyCo4C8j7kGJNFnr4hjK3KrANonXc5Dq56c";
-  const signature = "bestview";
-
-  const params = {
-    coordinates: savedLocation,
-  };
-
-  const generateURL = (loc: string) => {
-    return `https://maps.googleapis.com/maps/api/streetview?size=400x400&location=$${loc}&fov=80&heading=70&pitch=0&key=${apiKey}&signature=${signature}`;
-  };
-
-  useEffect(() => {
-    axios
-      .get("http://localhost:8080/locations")
-      .then((response) => setData(response.data))
-      .catch((error) => console.error("cant fetch sad: ", error));
-  }, [savedLocation]);
-
-  useEffect(() => {
-    axios
-      .get("http://localhost:8080/pictures", { params })
-      .then((response) => setImageUrl(response.data))
-      .catch((error) => console.error("cant fetch sad: ", error));
-  }, [savedLocation]);
-
-  const handleLocationInputEnter = (e: any) => {
-    if (e.key == "Enter") {
-      setSavedLocation(inputLocation);
-      setImageUrl(generateURL(savedLocation));
-    }
-  };
-
-  const handleLocationInputChange = (e: any) => {
-    setInputLocation(e.target.value);
-  };
+  const [inputLocation, setInputLocation] = useState("51.089763,-113.978308");
 
   return (
     <div>
-      <input
-        type="text"
-        value={inputLocation}
-        onChange={handleLocationInputChange}
-        onKeyDown={handleLocationInputEnter}
-      />
-      <p>Location inputted (saved): {savedLocation}</p>
-      <p>Location inputted: {inputLocation}</p>
-      <h1>API Data</h1>
-      <img />
-      {data ? <pre>{JSON.stringify(data, null, 2)}</pre> : <p>Loading...</p>}
-      <img src={imageUrl} alt="Street View" />
-      <div id="pano"></div>
+      <InputLocation onChange={setInputLocation} />
+      <TestApi />
+      <StaticImage inputCoordinate={inputLocation} />
+      <div id="pano">pano soon!</div>
     </div>
   );
 }
